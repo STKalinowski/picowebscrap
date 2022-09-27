@@ -19,18 +19,40 @@ def main():
         with open(RES_CSV) as resultFile:
             csvReader = csv.reader(csvFile, delimiter=',')
             headers = next(csvReader)
+            headers.append("License,Description,FileName")
             csvWriter = csv.writer(resultFile, delimiter=',')
 
-            for link in [ "https://www.lexaloffle.com/bbs/?tid=2145" ,"https://www.lexaloffle.com/bbs/?tid=36053"]:
-                print(link)
+            for entry in csvReader:
+                link = entry[4]
                 res = requests.get(link)
                 soup = BeautifulSoup(res.content, 'html.parser')
+                print(link)
+
+                #Handle Liscence
                 soupRes = soup.find_all(string="License:")    
                 if len(soupRes) > 0:
                     resParent = soupRes[0].parent
-                    print(resParent.next_sibling.next_sibling.text)
+                    license = resParent.next_sibling.next_sibling.text
                 else:
-                    soupRes = soup.find_all(string="No License")
-                    if len(soupRes) > 0:
-                        print(soupRes)
+                    license = "No License"
+                
+
+                #Handle Descriptions
+                description = ""
+                soupRes = soup.select("#main_div > div:nth-child(5) > div:nth-child(1) > div > div > div:nth-child(2) > div:nth-child(3) > p")#.find_all("p")
+                for i in soupRes[1:]:
+                    description += i.text + "\n"
+                #Get rid of last newline
+                description = description[:-1]
+
+                #Handle Cart
+                #Turn into p8, then get code and make lua copy
+                fileName = entry[3].strip()+".p8.png"
+                soupRes = soup.find_all(string="Cart")
+                pngFile = requests.get("https://www.lexaloffle.com"+soupRes[0].parent['href']) 
+                with open("./png/"+fileName, 'wb') as f:
+                    f.write(pngFile.content)
+                break
+
+
 main()     

@@ -1,0 +1,5 @@
+The task is to read a text file and output the frequency of unique words in the file. The words must be normalized to lowercase, and the output should be in order from most frequent to least frequent.
+
+The constraints are that the program must run in a single thread on a single machine, and that it should not read the whole file into memory. Additionally, the program should only use the language's standard library functions.
+
+Lets code the program in python:
