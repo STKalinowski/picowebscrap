@@ -131,3 +131,5 @@ dmypy.json
 shrinko8/
 
 result
+
+.DS_Store
